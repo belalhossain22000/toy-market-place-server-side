@@ -76,6 +76,21 @@ async function run() {
         });
     });
 
+    // Get an item by email
+    app.get("/toyByEmail/:email", async (req, res) => {
+      try {
+        const userEmail = req.params.email;
+        console.log(userEmail);
+        const result = await toyCollections
+          .find({ sellerEmail: userEmail })
+          .toArray();
+        console.log(result);
+        res.send(result);
+      } catch (error) {
+        res.status(500).json({ error: "Error getting items" });
+      }
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
