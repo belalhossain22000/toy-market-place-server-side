@@ -91,6 +91,29 @@ async function run() {
       }
     });
 
+    // Update an item
+    app.put("/toy/:id", (req, res) => {
+      const toyId = req.params.id;
+      const updatedToy = req.body;
+      toyCollections
+        .findOneAndUpdate(
+          { _id: new ObjectId(toyId) },
+          { $set: updatedToy },
+          { returnOriginal: false }
+        )
+        .then((result) => {
+          if (!result) {
+            res.status(404).json({ error: "Item not found" });
+          } else {
+            console.log(result);
+            res.send(result);
+          }
+        })
+        .catch((error) => {
+          res.status(500).json({ error: "Error updating item" });
+        });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
