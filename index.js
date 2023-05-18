@@ -114,6 +114,23 @@ async function run() {
         });
     });
 
+    // Delete an item
+    app.delete("/toy/:id", (req, res) => {
+      const toyId = req.params.id;
+      toyCollections
+        .deleteOne({ _id: new ObjectId(toyId) })
+        .then((result) => {
+          if (result.deletedCount === 0) {
+            res.status(404).json({ error: "Item not found" });
+          } else {
+            res.send(result);
+          }
+        })
+        .catch((error) => {
+          res.status(500).json({ error: "Error deleting item" });
+        });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
