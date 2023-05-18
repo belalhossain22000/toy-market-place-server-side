@@ -59,6 +59,23 @@ async function run() {
         });
     });
 
+    // Get a single item
+    app.get("/toy/:id", (req, res) => {
+      const toyId = req.params.id;
+      toyCollections
+        .findOne({ _id: new ObjectId(toyId) })
+        .then((toy) => {
+          if (!toy) {
+            res.status(404).json({ error: "Item not found" });
+          } else {
+            res.send(toy);
+          }
+        })
+        .catch((error) => {
+          res.status(500).json({ error: "Error getting item" });
+        });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
