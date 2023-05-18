@@ -46,7 +46,18 @@ async function run() {
         });
     });
 
-  
+    // Get all items
+    app.get("/allToys", (req, res) => {
+      toyCollections
+        .find()
+        .toArray()
+        .then((toys) => {
+          res.send(toys);
+        })
+        .catch((error) => {
+          res.status(500).json({ error: "Error getting items" });
+        });
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
