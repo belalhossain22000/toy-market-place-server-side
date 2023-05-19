@@ -50,6 +50,7 @@ async function run() {
     app.get("/allToys", (req, res) => {
       toyCollections
         .find()
+        .limit(20)
         .toArray()
         .then((toys) => {
           res.send(toys);
