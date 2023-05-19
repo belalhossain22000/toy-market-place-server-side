@@ -59,6 +59,19 @@ async function run() {
           res.status(500).json({ error: "Error getting items" });
         });
     });
+    // Get toy by search text  items
+    app.get("/allToysByTex/:text", (req, res) => {
+      const text = req.params.text;
+      toyCollections
+        .find({ $or: [{ name: { $regex: text, $options: "i" } }] })
+        .toArray()
+        .then((toys) => {
+          res.send(toys);
+        })
+        .catch((error) => {
+          res.status(500).json({ error: "Error getting items" });
+        });
+    });
 
     // Get a single item
     app.get("/toy/:id", (req, res) => {
