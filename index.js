@@ -27,7 +27,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     //database and collection
     const toyCollections = client.db("toyCollectionsDB").collection("toy");
@@ -63,7 +63,12 @@ async function run() {
     app.get("/allToysByTex/:text", (req, res) => {
       const text = req.params.text;
       toyCollections
-        .find({ $or: [{ name: { $regex: text, $options: "i" } }] })
+        .find({
+          $or: [
+            { name: { $regex: text, $options: "i" } },
+            { subcategory: { $regex: text, $options: "i" } },
+          ],
+        })
         .toArray()
         .then((toys) => {
           res.send(toys);
@@ -94,9 +99,19 @@ async function run() {
     app.get("/toyByEmail/:email", async (req, res) => {
       try {
         const userEmail = req.params.email;
-        console.log(userEmail);
+        // console.log(userEmail);
+        const sortBy = req.query.sortBy; // Get the sort option from the query parameters
+        let sortOption = {};
+
+        // Set the sort option based on the sortBy value
+        if (sortBy === "ascending") {
+          sortOption = { price: 1 }; // Sort in ascending order by price
+        } else if (sortBy === "descending") {
+          sortOption = { price: -1 }; // Sort in descending order by price
+        }
         const result = await toyCollections
           .find({ sellerEmail: userEmail })
+          .sort(sortOption)
           .toArray();
         console.log(result);
         res.send(result);
